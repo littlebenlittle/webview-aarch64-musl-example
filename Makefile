@@ -1,8 +1,5 @@
 SHELL=/bin/bash
 webview.h=src/webview.h
-cmd=podman run -ti --rm -v .:/mnt -v $$BUILD_COMMON:/opt/build-common -w /mnt builder
-pkg_config=pkg-config --cflags --libs glib-2.0 gtk+-3.0 webkit2gtk-4.0
-aarch64=build/aarch64
 
 .PHONY: build
 
@@ -11,5 +8,9 @@ fetch-webview:
 
 build:
 	@if [ -z "$$BUILD_COMMON" ]; then echo 'please set BUILD_COMMON (see README)'; exit 1; fi
-	@if [ ! -d $(CURDIR)/$(aarch64) ]; then mkdir -p $(CURDIR)/$(aarch64); fi
-	$(cmd) ash -c 'PATH=$$PATH:/opt/build-common/aarch64-linux-musl-cross/bin aarch64-linux-musl-g++ main.c `$(pkg_config)` -o $(aarch64)/app'
+	@if [ ! -d $(CURDIR)/build/aarch64 ]; then mkdir -p $(CURDIR)/build/aarch64; fi
+	@podman run -ti --rm \
+		-v .:/mnt \
+		-w /mnt \
+		builder ash -c \
+		'/opt/aarch64-linux-musl-cross/bin/aarch64-linux-musl-g++ main.c `pkg-config --cflags --libs glib-2.0 gtk+-3.0 webkit2gtk-4.0` -o build/aarch64/app'
