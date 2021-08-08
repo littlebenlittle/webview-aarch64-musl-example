@@ -11,16 +11,7 @@ podman run -ti --rm \
 	alpine:3.13 \
 	/fetch-musl-cross.sh
 
-if [ -z "`podman image ls | grep builder | grep base`" ]; then
-	ctr=`buildah from alpine:3.13`
-	trap "buildah rm $ctr" EXIT
-	buildah run $ctr apk add webkit2gtk-dev
-	buildah commit $ctr builder:base
-fi
-
-ctr=`buildah from builder:base`
+ctr=`buildah from alpine:3.13`
 trap "buildah rm $ctr" EXIT
-buildah config \
-	--env PKG_CONFIG_PATH=/usr/lib/pkgconfig \
-	$ctr
+buildah run $ctr apk add --arch aarch64 webkit2gtk-dev
 buildah commit $ctr builder

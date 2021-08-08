@@ -11,6 +11,5 @@ fetch-webview:
 
 build:
 	@if [ -z "$$BUILD_COMMON" ]; then echo 'please set BUILD_COMMON (see README)'; exit 1; fi
-	@if [ -z "$$MUSL_CROSS_PATH" ]; then echo 'please set MUSL_CROSS_PATH (see README)'; exit 1; fi
 	@if [ ! -d $(CURDIR)/$(aarch64) ]; then mkdir -p $(CURDIR)/$(aarch64); fi
 	$(cmd) ash -c 'PATH=$$PATH:/opt/build-common/aarch64-linux-musl-cross/bin aarch64-linux-musl-g++ main.c `$(pkg_config)` -o $(aarch64)/app'
